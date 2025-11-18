@@ -415,6 +415,186 @@
 
 
 
+// import React, { useState } from "react";
+// import {
+//   View,
+//   Text,
+//   TextInput,
+//   TouchableOpacity,
+//   StyleSheet,
+//   Alert,
+// } from "react-native";
+// // Firebase imports removed because we’re using backend API
+// // import { auth } from "../firebase";
+// // import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// const BASE_URL = "http://localhost:5000/api";
+// // ⚠️ For Android emulator use 10.0.2.2
+// // For iOS simulator → "http://localhost:5000/api"
+// // For real device → "http://YOUR_PC_IP:5000/api"
+
+// export default function LoginScreen({ navigation }) {
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [loading, setLoading] = useState(false);
+
+//   // LOGIN FUNCTION (using fetch -> backend /auth/login)
+//   const handleLogin = async () => {
+//     if (!email || !password) {
+//       Alert.alert("Error", "Please enter email and password");
+//       return;
+//     }
+
+//     try {
+//       setLoading(true);
+
+//       const response = await fetch(`${BASE_URL}/auth/login`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ email, password }),
+//       });
+
+//       const data = await response.json();
+
+//       if (!response.ok) {
+//         // Backend sends: { message: "Invalid email or password." }
+//         return Alert.alert("Login Failed", data.message || "Something went wrong");
+//       }
+
+//       // data = { message, token, user: { id, name, email } }
+//       // Save token (and maybe user) in AsyncStorage
+//       await AsyncStorage.setItem("token", data.token);
+//       await AsyncStorage.setItem("user", JSON.stringify(data.user));
+
+//       Alert.alert("Success", "Login successful!");
+
+//       // Navigate to Home (or Main app screen)
+//       navigation.replace("Home"); // make sure "Home" route exists in your navigator
+//     } catch (error) {
+//       console.error("Login error:", error);
+//       Alert.alert("Error", "Unable to connect to server. Check your internet / server.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   // FORGOT PASSWORD FUNCTION (BACKEND VERSION)
+//   const handleForgetPassword = async () => {
+//     if (!email) {
+//       Alert.alert("Error", "Please enter your email to reset password");
+//       return;
+//     }
+
+//     try {
+//       setLoading(true);
+
+//       // This assumes you have: POST /api/auth/forgot-password on backend
+//       const response = await fetch(`${BASE_URL}/auth/forgot-password`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ email }),
+//       });
+
+//       const data = await response.json();
+
+//       if (!response.ok) {
+//         return Alert.alert("Error", data.message || "Failed to send reset email");
+//       }
+
+//       Alert.alert("Success", "Password reset link has been sent to your email.");
+//     } catch (error) {
+//       console.error("Forgot Password Error:", error);
+//       Alert.alert("Error", "Something went wrong. Please try again.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       <Text style={styles.title}>Login</Text>
+
+//       <TextInput
+//         style={styles.input}
+//         placeholder="Enter Email"
+//         placeholderTextColor="#777"
+//         value={email}
+//         onChangeText={setEmail}
+//         autoCapitalize="none"
+//         keyboardType="email-address"
+//       />
+
+//       <TextInput
+//         style={styles.input}
+//         placeholder="Enter Password"
+//         secureTextEntry
+//         placeholderTextColor="#777"
+//         value={password}
+//         onChangeText={setPassword}
+//       />
+
+//       <TouchableOpacity onPress={handleForgetPassword}>
+//         <Text style={styles.forgot}>Forgot Password?</Text>
+//       </TouchableOpacity>
+
+//       <TouchableOpacity
+//         style={[styles.loginBtn, loading && { opacity: 0.7 }]}
+//         onPress={handleLogin}
+//         disabled={loading}
+//       >
+//         <Text style={styles.loginText}>
+//           {loading ? "Please wait..." : "Login"}
+//         </Text>
+//       </TouchableOpacity>
+//     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     justifyContent: "center",
+//     padding: 25,
+//     backgroundColor: "#fff",
+//   },
+//   title: {
+//     fontSize: 32,
+//     fontWeight: "bold",
+//     marginBottom: 30,
+//     textAlign: "center",
+//   },
+//   input: {
+//     height: 55,
+//     borderWidth: 1,
+//     borderColor: "#ccc",
+//     borderRadius: 10,
+//     paddingHorizontal: 15,
+//     marginBottom: 15,
+//     fontSize: 16,
+//   },
+//   forgot: {
+//     textAlign: "right",
+//     color: "#0066FF",
+//     marginBottom: 20,
+//   },
+//   loginBtn: {
+//     backgroundColor: "black",
+//     paddingVertical: 15,
+//     borderRadius: 10,
+//     alignItems: "center",
+//   },
+//   loginText: {
+//     color: "white",
+//     fontSize: 18,
+//     fontWeight: "600",
+//   },
+// });
 import React, { useState } from "react";
 import {
   View,
@@ -424,16 +604,13 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-// Firebase imports removed because we’re using backend API
-// import { auth } from "../firebase";
-// import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://localhost:5000/api";
-// ⚠️ For Android emulator use 10.0.2.2
-// For iOS simulator → "http://localhost:5000/api"
-// For real device → "http://YOUR_PC_IP:5000/api"
+// ⚠️ IMPORTANT:
+// Metro ne dakhavlela IP: exp://192.168.0.106:8081
+// -> PC IP = 192.168.0.106
+// Backend port 5000 asel tar:
+const BASE_URL = "http://192.168.0.106:5000"; // ⬅️ jar IP badla tar fakt he line badal
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -458,31 +635,46 @@ export default function LoginScreen({ navigation }) {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
 
       if (!response.ok) {
         // Backend sends: { message: "Invalid email or password." }
-        return Alert.alert("Login Failed", data.message || "Something went wrong");
+        return Alert.alert(
+          "Login Failed",
+          data?.message || `Something went wrong (${response.status})`
+        );
       }
 
       // data = { message, token, user: { id, name, email } }
-      // Save token (and maybe user) in AsyncStorage
-      await AsyncStorage.setItem("token", data.token);
-      await AsyncStorage.setItem("user", JSON.stringify(data.user));
+      if (data?.token) {
+        await AsyncStorage.setItem("token", data.token);
+      }
+      if (data?.user) {
+        await AsyncStorage.setItem("user", JSON.stringify(data.user));
+      }
 
-      Alert.alert("Success", "Login successful!");
+      Alert.alert("Success", data?.message || "Login successful!");
 
       // Navigate to Home (or Main app screen)
       navigation.replace("Home"); // make sure "Home" route exists in your navigator
     } catch (error) {
       console.error("Login error:", error);
-      Alert.alert("Error", "Unable to connect to server. Check your internet / server.");
+      Alert.alert(
+        "Error",
+        error?.message ||
+          "Unable to connect to server. Check your Wi-Fi / server IP / port."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // FORGOT PASSWORD FUNCTION (BACKEND VERSION)
+  // FORGOT PASSWORD FUNCTION (optional – only if backend route exists)
   const handleForgetPassword = async () => {
     if (!email) {
       Alert.alert("Error", "Please enter your email to reset password");
@@ -492,7 +684,7 @@ export default function LoginScreen({ navigation }) {
     try {
       setLoading(true);
 
-      // This assumes you have: POST /api/auth/forgot-password on backend
+      // Only works if you have POST /auth/forgot-password in backend
       const response = await fetch(`${BASE_URL}/auth/forgot-password`, {
         method: "POST",
         headers: {
@@ -501,13 +693,24 @@ export default function LoginScreen({ navigation }) {
         body: JSON.stringify({ email }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        return Alert.alert("Error", data.message || "Failed to send reset email");
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
       }
 
-      Alert.alert("Success", "Password reset link has been sent to your email.");
+      if (!response.ok) {
+        return Alert.alert(
+          "Error",
+          data?.message || "Failed to send reset email"
+        );
+      }
+
+      Alert.alert(
+        "Success",
+        data?.message || "Password reset link has been sent to your email."
+      );
     } catch (error) {
       console.error("Forgot Password Error:", error);
       Alert.alert("Error", "Something went wrong. Please try again.");
